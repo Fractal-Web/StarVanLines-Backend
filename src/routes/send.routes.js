@@ -20,11 +20,11 @@ function replacePlaceholders(template, replacements) {
 }
 
 function getUtmCookies(req) {
-  return []; // TODO: Remove this after testing
+  // return []; // TODO: Remove this after testing
   const tags = config.utmTags;
   const utm = [];
   for (const tag of tags) {
-    const value = req.cookies?.[tag];
+    const value = req.body?.[tag];
     if (value) utm.push(`<b>${tag}:</b> ${value}`);
   }
   return utm;
@@ -48,6 +48,7 @@ router.post('/movingRequest', async (req, res) => {
   try {
     const { ClientName, PhoneNumber, EmailAddress, ZipFrom, ZipTo, PageUrl } = req.body || {};
     const utmCookies = getUtmCookies(req);
+    // console.log('utmCookiecdcs', utmCookies);
     const html = renderTemplate('movingRequest.html', {
       clientName: ClientName,
       phoneNumber: PhoneNumber,
