@@ -24,9 +24,15 @@ const hasTopsmm = (req) => {
   return entries.some(([, v]) => String(v ?? '').toLowerCase().includes('topsmm'));
 };
 
+const uniqueEmails = (arr) => Array.from(new Set((arr || []).map((e) => String(e).trim()).filter(Boolean)));
+
 export const selectAdminRecipients = (req) => {
   const base = Array.isArray(config.mail?.adminEmails) ? config.mail.adminEmails : [];
   const utm = Array.isArray(config.mail?.adminEmailsUtm) ? config.mail.adminEmailsUtm : [];
-  if (hasUtm(req) && utm.length > 0 && !hasTopsmm(req)) return utm;
-  return base;
+
+  let recipients = [...base];
+  if (hasUtm(req) && utm.length > 0 && !hasTopsmm(req)) {
+    recipients = [...recipients, ...utm];
+  }
+  return uniqueEmails(recipients);
 };
