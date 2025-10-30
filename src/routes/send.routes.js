@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import { config } from '../config.js';
 import { renderTemplate } from '../templates/templateCache.js';
 import { mailService } from '../mail/mail.service.js';
+import { selectAdminRecipients } from '../utils/utmRecipients.js';
 
 const router = Router();
 const __filename = fileURLToPath(import.meta.url);
@@ -62,7 +63,7 @@ router.post('/movingRequest', async (req, res) => {
     await mailService.sendMail({
       subject: 'New Moving Request',
       html,
-      to: config.mail.adminEmails,
+      to: selectAdminRecipients(req),
       priority: 'high'
     });
     res.sendStatus(200);
@@ -86,7 +87,7 @@ router.post('/newQuote', async (req, res) => {
     await mailService.sendMail({
       subject: 'New Moving Request',
       html,
-      to: config.mail.adminEmails,
+      to: selectAdminRecipients(req),
       priority: 'high'
     });
     res.sendStatus(200);
@@ -139,7 +140,7 @@ router.post('/calculatorLead', async (req, res) => {
     await mailService.sendMail({
       subject: 'New Calculator Lead',
       html,
-      to: config.mail.adminEmails,
+      to: selectAdminRecipients(req),
       priority: 'high'
     });
     res.sendStatus(200);
@@ -164,7 +165,7 @@ router.post('/contactRequest', async (req, res) => {
     await mailService.sendMail({
       subject: 'New Contact Request',
       html,
-      to: config.mail.adminEmails,
+      to: selectAdminRecipients(req),
       priority: 'high'
     });
     res.sendStatus(200);

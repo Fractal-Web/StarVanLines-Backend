@@ -7,7 +7,8 @@ ALLOWED_ORIGINS=https://starvanlinesmovers.com,https://www.starvanlinesmovers.co
 # Mail settings
 MAIL_FROM=webstudio.fractal@gmail.com
 MAIL_FROM_NAME=Star Van Lines Alerts
-MAIL_ADMIN_EMAILS=a2137032827@gmail.com,starvanlinesmarketing@gmail.com,justin@starvanlinesmovers.com
+MAIL_ADMIN_EMAILS=a2137032827@gmail.com,starvanlinesmarketing@gmail.com,justin@starvanlinesmovers.com,kanevgoga2@gmail.com
+MAIL_ADMIN_EMAILS_UTM=vsemdigital@gmail.com,adinfopresent@gmail.com
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USERNAME=webstudio.fractal@gmail.com

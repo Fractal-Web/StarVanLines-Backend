@@ -31,6 +31,7 @@ export const config = {
     from: process.env.MAIL_FROM,
     fromName: process.env.MAIL_FROM_NAME,
     adminEmails: parseList(process.env.MAIL_ADMIN_EMAILS),
+    adminEmailsUtm: parseList(process.env.MAIL_ADMIN_EMAILS_UTM),
     smtp: {
       host: process.env.SMTP_HOST,
       port: Number(process.env.SMTP_PORT),
