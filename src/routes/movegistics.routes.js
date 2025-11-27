@@ -6,7 +6,7 @@ import { isValidPhone, phoneValidationMessage } from '../utils/phoneValidation.j
 const router = Router();
 
 const extractPhone = (payload = {}) => {
-  return payload.PhoneNumber ?? payload.phone1 ?? payload.phone ?? payload.phoneNumber;
+  return payload.PhoneNumber ?? payload.phone1 ?? payload.phone ?? payload.phoneNumber ?? payload.homePhone ?? '';
 };
 
 router.post('/send', async (req, res) => {
@@ -23,21 +23,21 @@ router.post('/send', async (req, res) => {
         timestamp: new Date().toISOString()
       });
     }
-    // const response = await axios.post('https://mcc.movegistics.com/create_lead.php', payload, {
-    //   headers: {
-    //     'content-type': 'application/json; charset=utf-8',
-    //     token: config.movegistics.token
-    //   },
-    //   validateStatus: () => true
-    // });
+    const response = await axios.post('https://mcc.movegistics.com/create_lead.php', payload, {
+      headers: {
+        'content-type': 'application/json; charset=utf-8',
+        token: config.movegistics.token
+      },
+      validateStatus: () => true
+    });
 
-    // if (response.status >= 200 && response.status < 300) {
+    if (response.status >= 200 && response.status < 300) {
       return res.status(200).json({
         success: true,
         message: 'Data sent to Movegistics successfully',
         timestamp: new Date().toISOString()
       });
-    
+  }
 
     return res.status(response.status).json({
       success: false,
