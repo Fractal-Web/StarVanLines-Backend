@@ -5,6 +5,7 @@ import { config } from '../config.js';
 import { renderTemplate } from '../templates/templateCache.js';
 import { mailService } from '../mail/mail.service.js';
 import { selectAdminRecipients } from '../utils/utmRecipients.js';
+import { isValidPhone, phoneValidationMessage } from '../utils/phoneValidation.js';
 
 const router = Router();
 const __filename = fileURLToPath(import.meta.url);
@@ -45,9 +46,18 @@ function pick(body, keys, fallback = undefined) {
   return fallback;
 }
 
+const ensureValidPhone = (res, value) => {
+  if (!isValidPhone(value)) {
+    res.status(400).json({ error: phoneValidationMessage });
+    return false;
+  }
+  return true;
+};
+
 router.post('/movingRequest', async (req, res) => {
   try {
     const { ClientName, PhoneNumber, EmailAddress, ZipFrom, ZipTo, PageUrl } = req.body || {};
+    if (!ensureValidPhone(res, PhoneNumber)) return;
     const utmCookies = getUtmCookies(req);
     // console.log('utmCookiecdcs', utmCookies);
     const html = renderTemplate('movingRequest.html', {
@@ -75,6 +85,7 @@ router.post('/movingRequest', async (req, res) => {
 router.post('/newQuote', async (req, res) => {
   try {
     const { ClientName, PhoneNumber, EmailAddress, PageUrl } = req.body || {};
+    if (!ensureValidPhone(res, PhoneNumber)) return;
     const utmCookies = getUtmCookies(req);
     const html = renderTemplate('newQuote.html', {
       clientName: ClientName,
@@ -112,6 +123,7 @@ router.post('/calculatorLead', async (req, res) => {
       clientInventory = [],
       PageUrl
     } = req.body || {};
+    if (!ensureValidPhone(res, phone1)) return;
 
     const inventoryStringArray = (clientInventory || []).map((i) => `
 <h3>- ${i?.item?.itemName || ''}*</h3>
@@ -152,6 +164,7 @@ router.post('/calculatorLead', async (req, res) => {
 router.post('/contactRequest', async (req, res) => {
   try {
     const { ClientName, PhoneNumber, EmailAddress, Comment, PageUrl } = req.body || {};
+    if (!ensureValidPhone(res, PhoneNumber)) return;
     const utmCookies = getUtmCookies(req);
     const html = renderTemplate('contactRequest.html', {
       clientName: ClientName,

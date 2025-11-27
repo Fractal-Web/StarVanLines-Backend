@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import axios from 'axios';
 import { config } from '../config.js';
+import { isValidPhone, phoneValidationMessage } from '../utils/phoneValidation.js';
 
 const router = Router();
 
@@ -11,6 +12,13 @@ router.post('/send', async (req, res) => {
   
   try {
     const payload = req.body || {};
+    if (!isValidPhone(payload.phone1)) {
+      return res.status(400).json({
+        success: false,
+        error: phoneValidationMessage,
+        timestamp: new Date().toISOString()
+      });
+    }
     
     const granotData = new URLSearchParams({
       firstname: payload.firstname || '',
