@@ -10,6 +10,7 @@ import sendRoutes from './routes/send.routes.js';
 import movegisticsRoutes from './routes/movegistics.routes.js';
 import granotRoutes from './routes/granot.routes.js';
 import checklistRoutes from './routes/checklist.routes.js';
+import usCitiesRoutes from './routes/usCities.routes.js';
 import { initTemplates } from './templates/templateCache.js';
 
 const app = express();
@@ -37,6 +38,7 @@ app.use('/send', sendRoutes);
 app.use('/Movegistics', movegisticsRoutes);
 app.use('/Granot', granotRoutes);
 app.use('/Checklist', checklistRoutes);
+app.use('/us-cities', usCitiesRoutes);
 
 app.get('/health', (_req, res) => res.json({ status: 'ok', ts: Date.now() }));
 
