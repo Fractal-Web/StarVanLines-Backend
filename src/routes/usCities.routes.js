@@ -12,7 +12,7 @@ const loadUSCities = async () => {
 
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
-    const filePath = path.join(__dirname, '..', 'data', 'USCities.json'); // <-- шлях до JSON
+    const filePath = path.join(__dirname, '..', 'data', 'USCities.json');
 
     const fileContent = await fs.readFile(filePath, 'utf-8');
     usCitiesCache = JSON.parse(fileContent);
