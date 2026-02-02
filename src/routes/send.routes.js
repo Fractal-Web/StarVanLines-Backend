@@ -6,6 +6,7 @@ import { renderTemplate } from '../templates/templateCache.js';
 import { mailService } from '../mail/mail.service.js';
 import { selectAdminRecipients } from '../utils/utmRecipients.js';
 import { isValidPhone, phoneValidationMessage } from '../utils/phoneValidation.js';
+import { log } from '../utils/logger.js';
 
 const router = Router();
 const __filename = fileURLToPath(import.meta.url);
@@ -58,6 +59,7 @@ router.post('/movingRequest', async (req, res) => {
   try {
     const { ClientName, PhoneNumber, EmailAddress, ZipFrom, ZipTo, PageUrl } = req.body || {};
     if (!ensureValidPhone(res, PhoneNumber)) return;
+    log('INFO', `Processing movingRequest [${req.requestId}]`, { body: req.body });
     const utmCookies = getUtmCookies(req);
     // console.log('utmCookiecdcs', utmCookies);
     const html = renderTemplate('movingRequest.html', {
@@ -86,6 +88,7 @@ router.post('/newQuote', async (req, res) => {
   try {
     const { ClientName, PhoneNumber, EmailAddress, PageUrl } = req.body || {};
     if (!ensureValidPhone(res, PhoneNumber)) return;
+    log('INFO', `Processing newQuote [${req.requestId}]`, { body: req.body });
     const utmCookies = getUtmCookies(req);
     const html = renderTemplate('newQuote.html', {
       clientName: ClientName,
@@ -124,6 +127,7 @@ router.post('/calculatorLead', async (req, res) => {
       PageUrl
     } = req.body || {};
     if (!ensureValidPhone(res, phone1)) return;
+    log('INFO', `Processing calculatorLead [${req.requestId}]`, { body: req.body });
 
     const inventoryStringArray = (clientInventory || []).map((i) => `
 <h3>- ${i?.item?.itemName || ''}*</h3>
@@ -165,6 +169,7 @@ router.post('/contactRequest', async (req, res) => {
   try {
     const { ClientName, PhoneNumber, EmailAddress, Comment, PageUrl } = req.body || {};
     if (!ensureValidPhone(res, PhoneNumber)) return;
+    log('INFO', `Processing contactRequest [${req.requestId}]`, { body: req.body });
     const utmCookies = getUtmCookies(req);
     const html = renderTemplate('contactRequest.html', {
       clientName: ClientName,

@@ -5,22 +5,21 @@ NODE_ENV=development
 ALLOWED_ORIGINS=https://starvanlinesmovers.com,https://www.starvanlinesmovers.com,http://localhost:3000,http://localhost:3001,http://localhost:8080,https://localhost:3000,https://localhost:3001,https://localhost:8080
 
 # Mail settings
-MAIL_FROM=...
+MAIL_FROM=webstudio.fractal@gmail.com
 MAIL_FROM_NAME=Star Van Lines Alerts
-MAIL_ADMIN_EMAILS=...
-MAIL_ADMIN_EMAILS_UTM=...
+MAIL_ADMIN_EMAILS=a2137032827@gmail.com,starvanlinesmarketing@gmail.com,justin@starvanlinesmovers.com,kanevgoga2@gmail.com
+MAIL_ADMIN_EMAILS_UTM=vsemdigital@gmail.com,adinfopresent@gmail.com
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
-SMTP_USERNAME=...
-SMTP_PASSWORD=...
+SMTP_USERNAME=webstudio.fractal@gmail.com
+SMTP_PASSWORD=szcx zdtr lmzj nigd
 
 # UTM tags
 UTM_TAGS=utm_source,utm_medium,utm_campaign,utm_content,utm_term
 
 # Movegistics
-MOVEGISTICS_TOKEN=...
+MOVEGISTICS_TOKEN=bW92ZWdpc3RpY3MtY3JtLWxlYWQtbWNj
 
 # Assets and templates
 CHECKLIST_PDF_PATH=assets/Checklist.pdf
 TEMPLATES_DIR=src/templates
-

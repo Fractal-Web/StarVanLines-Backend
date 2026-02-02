@@ -2,6 +2,7 @@ import { Router } from 'express';
 import axios from 'axios';
 import { config } from '../config.js';
 import { isValidPhone, phoneValidationMessage } from '../utils/phoneValidation.js';
+import { log } from '../utils/logger.js';
 
 const router = Router();
 
@@ -13,9 +14,7 @@ router.post('/send', async (req, res) => {
   try {
     const payload = req.body || {};
     const phone = extractPhone(payload);
-    console.log('=== Movegistics /send endpoint hit ===');
-    console.log('Request body:', req.body);
-    console.log('Extracted phone number:', phone);
+    log('INFO', `Processing Movegistics lead request [${req.requestId}]`, { phone });
     if (!isValidPhone(phone)) {
       return res.status(400).json({
         success: false,
@@ -31,13 +30,15 @@ router.post('/send', async (req, res) => {
       validateStatus: () => true
     });
 
+    log('INFO', `Movegistics API response [${req.requestId}]: ${response.status}`, { data: response.data });
+
     if (response.status >= 200 && response.status < 300) {
       return res.status(200).json({
         success: true,
         message: 'Data sent to Movegistics successfully',
         timestamp: new Date().toISOString()
       });
-  }
+    }
 
     return res.status(response.status).json({
       success: false,

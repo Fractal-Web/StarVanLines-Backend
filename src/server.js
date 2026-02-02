@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import morgan from 'morgan';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 
@@ -12,12 +11,13 @@ import granotRoutes from './routes/granot.routes.js';
 import checklistRoutes from './routes/checklist.routes.js';
 import usCitiesRoutes from './routes/usCities.routes.js';
 import { initTemplates } from './templates/templateCache.js';
+import { requestLogger, log } from './utils/logger.js';
 
 const app = express();
 
 app.use(helmet());
 app.use(compression());
-app.use(morgan('dev'));
+app.use(requestLogger);
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -42,7 +42,12 @@ app.use('/us-cities', usCitiesRoutes);
 
 app.get('/health', (_req, res) => res.json({ status: 'ok', ts: Date.now() }));
 
-app.use((err, _req, res, _next) => {
+app.use((err, req, res, _next) => {
+  log('ERROR', `Unhandled error at ${req.method} ${req.url}`, {
+    message: err?.message,
+    stack: err?.stack,
+    requestId: req.requestId
+  });
   res.status(500).json({ error: err?.message || 'Internal Server Error' });
 });
 

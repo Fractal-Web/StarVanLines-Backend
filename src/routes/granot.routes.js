@@ -2,14 +2,13 @@ import { Router } from 'express';
 import axios from 'axios';
 import { config } from '../config.js';
 import { isValidPhone, phoneValidationMessage } from '../utils/phoneValidation.js';
+import { log } from '../utils/logger.js';
 
 const router = Router();
 
 router.post('/send', async (req, res) => {
-  console.log('=== Granot /send endpoint hit ===');
-  console.log('Request body:', req.body);
-  console.log('Request headers:', req.headers);
-  
+  log('INFO', `Processing Granot lead request [${req.requestId}]`);
+
   try {
     const payload = req.body || {};
     if (!isValidPhone(payload.phone1)) {
@@ -19,7 +18,7 @@ router.post('/send', async (req, res) => {
         timestamp: new Date().toISOString()
       });
     }
-    
+
     const granotData = new URLSearchParams({
       firstname: payload.firstname || '',
       ozip: payload.ozip || '',
@@ -43,6 +42,8 @@ router.post('/send', async (req, res) => {
       }
     );
 
+    log('INFO', `Granot API response [${req.requestId}]: ${response.status}`, { data: response.data });
+
     if (response.status >= 200 && response.status < 300) {
       return res.status(200).json({
         success: true,
@@ -57,10 +58,10 @@ router.post('/send', async (req, res) => {
       timestamp: new Date().toISOString()
     });
   } catch (error) {
-    return res.status(500).json({ 
-      success: false, 
-      error: error.message, 
-      timestamp: new Date().toISOString() 
+    return res.status(500).json({
+      success: false,
+      error: error.message,
+      timestamp: new Date().toISOString()
     });
   }
 });
