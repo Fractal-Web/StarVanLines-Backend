@@ -13,6 +13,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const templatesDir = config.templatesDir || path.resolve(__dirname, '..', 'templates');
+const partnerRequestRecipients = ['info@starvanlinesmovers.com'];
 
 function replacePlaceholders(template, replacements) {
   let result = template;
@@ -264,7 +265,7 @@ router.post('/partnerRequest', async (req, res) => {
     await mailService.sendMail({
       subject: 'New Partner Request',
       html,
-      to: selectAdminRecipients(req),
+      to: partnerRequestRecipients,
       priority: 'high'
     });
 
