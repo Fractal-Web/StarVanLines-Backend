@@ -47,6 +47,58 @@ function pick(body, keys, fallback = undefined) {
   return fallback;
 }
 
+const toHtmlText = (value) => String(value ?? '-').replaceAll('\n', '<br/>');
+
+const parsePartnerFields = (rawFields) => {
+  if (!rawFields) return [];
+
+  let parsed = rawFields;
+  if (typeof rawFields === 'string') {
+    try {
+      parsed = JSON.parse(rawFields);
+    } catch (_error) {
+      return [];
+    }
+  }
+
+  if (!Array.isArray(parsed)) return [];
+
+  return parsed
+    .filter((field) => field && typeof field === 'object')
+    .map((field) => ({
+      key: pick(field, ['key'], ''),
+      label: pick(field, ['label'], ''),
+      value: pick(field, ['value'], '-')
+    }));
+};
+
+const formatPartnerFieldsHtml = (rawFields, body) => {
+  const parsedFields = parsePartnerFields(rawFields);
+
+  if (parsedFields.length) {
+    return parsedFields
+      .map((field) => `<b>${field.label || field.key || 'Field'}:</b> ${toHtmlText(field.value)}`)
+      .join('<br/>');
+  }
+
+  const excludedKeys = new Set([
+    'PageUrl',
+    'pageUrl',
+    'FormType',
+    'Position',
+    'position',
+    'PositionKey',
+    'positionKey',
+    'Fields',
+    ...(config.utmTags || [])
+  ]);
+
+  return Object.entries(body || {})
+    .filter(([key]) => !excludedKeys.has(key))
+    .map(([key, value]) => `<b>${key}:</b> ${toHtmlText(value)}`)
+    .join('<br/>');
+};
+
 const ensureValidPhone = (res, value) => {
   if (!isValidPhone(value)) {
     res.status(400).json({ error: phoneValidationMessage });
@@ -186,6 +238,36 @@ router.post('/contactRequest', async (req, res) => {
       to: selectAdminRecipients(req),
       priority: 'high'
     });
+    res.sendStatus(200);
+  } catch (error) {
+    return handleError(res, error);
+  }
+});
+
+router.post('/partnerRequest', async (req, res) => {
+  try {
+    const body = req.body || {};
+    log('INFO', `Processing partnerRequest [${req.requestId}]`, { body });
+
+    const utmCookies = getUtmCookies(req);
+    const html = renderTemplate('partnerRequest.html', {
+      fullName: pick(body, ['ClientName', 'clientName', 'FullName', 'fullName', 'name'], '-'),
+      phoneNumber: pick(body, ['PhoneNumber', 'phoneNumber', 'Phone', 'phone', 'tel'], '-'),
+      email: pick(body, ['EmailAddress', 'emailAddress', 'Email', 'email'], '-'),
+      position: pick(body, ['Position', 'position'], '-'),
+      positionKey: pick(body, ['PositionKey', 'positionKey'], '-'),
+      fieldsHtml: formatPartnerFieldsHtml(body.Fields, body) || '-',
+      pageUrl: pick(body, ['PageUrl', 'pageUrl'], '-'),
+      utmCookies: utmCookies.join('<br/>')
+    });
+
+    await mailService.sendMail({
+      subject: 'New Partner Request',
+      html,
+      to: selectAdminRecipients(req),
+      priority: 'high'
+    });
+
     res.sendStatus(200);
   } catch (error) {
     return handleError(res, error);
