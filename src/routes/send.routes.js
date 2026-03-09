@@ -299,7 +299,7 @@ router.post('/reviewRequest', async (req, res) => {
     await mailService.sendMail({
       subject: 'New Review Request',
       html,
-      to: selectAdminRecipients(req),
+      to: partnerRequestRecipients,
       priority: 'high'
     });
 
