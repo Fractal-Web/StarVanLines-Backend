@@ -275,6 +275,40 @@ router.post('/partnerRequest', async (req, res) => {
   }
 });
 
+router.post('/reviewRequest', async (req, res) => {
+  try {
+    const body = req.body || {};
+    log('INFO', `Processing reviewRequest [${req.requestId}]`, { body });
+
+    const utmCookies = getUtmCookies(req);
+    const html = renderTemplate('reviewRequest.html', {
+      userName: pick(body, ['ClientName', 'clientName', 'FullName', 'fullName', 'UserName', 'userName', 'name'], '-'),
+      starsRating: pick(body, ['StarsRating', 'starsRating', 'rating'], '-'),
+      fromZip: pick(body, ['FromZip', 'fromZip', 'from'], '-'),
+      toZip: pick(body, ['ToZip', 'toZip', 'to'], '-'),
+      fromCity: pick(body, ['FromCity', 'fromCity'], '-'),
+      toCity: pick(body, ['ToCity', 'toCity'], '-'),
+      route: pick(body, ['Route', 'route'], '-'),
+      comment: toHtmlText(pick(body, ['Comment', 'comment', 'CommentBody', 'commentBody'], '-')),
+      mediaType: pick(body, ['MediaType', 'mediaType'], '-'),
+      mediaUrl: pick(body, ['MediaUrl', 'mediaUrl'], '-'),
+      pageUrl: pick(body, ['PageUrl', 'pageUrl'], '-'),
+      utmCookies: utmCookies.join('<br/>')
+    });
+
+    await mailService.sendMail({
+      subject: 'New Review Request',
+      html,
+      to: selectAdminRecipients(req),
+      priority: 'high'
+    });
+
+    res.sendStatus(200);
+  } catch (error) {
+    return handleError(res, error);
+  }
+});
+
 export default router;
 
 
