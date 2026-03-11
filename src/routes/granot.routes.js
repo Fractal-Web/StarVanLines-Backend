@@ -28,6 +28,7 @@ router.post('/send', async (req, res) => {
       movedte: payload.movedte || '',
       phone1: payload.phone1 || '',
       email: payload.email || '',
+      notes: payload.notes || '',
       label: payload.label || ''
     });
 
